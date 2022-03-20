@@ -1,0 +1,55 @@
+---
+version: "2.0"
+
+services:
+  dashd:
+    image: ghcr.io/ubunteroz/akash-dashd:0.17.0.3-1
+    args:
+      - "-testnet"
+      - "-server"
+      - "-bind=0.0.0.0"
+      - "-rpcallowip=0.0.0.0/0"
+      - "-rpcbind=0.0.0.0"
+      - "-rpcuser=dash"
+      - "-rpcpassword=dash"
+      - "-prune=100000"
+      - "-masternodeblsprivkey=4b3e8e175f5348b118ecf752a864618fc3047b5ce867b8f19812dce89f40fb36"
+    params:
+      storage:
+        data:
+          mount: /root/.dashcore
+    expose:
+      - port: 19998
+        as: 19998
+        to:
+          - global: true
+      - port: 19999
+        as: 19999
+        to:
+          - global: true
+profiles:
+  compute:
+    dashd-profile:
+      resources:
+        cpu:
+          units: 2.0
+        memory:
+          size: 16Gi
+        storage:
+          - size: 5Gi
+          - name: data
+            size: 128Gi
+            attributes:
+              persistent: true
+              class: beta2
+  placement:
+    westcoast:
+      pricing:
+        dashd-profile:
+          denom: uakt
+          amount: 1000
+deployment:
+  dashd:
+    westcoast:
+      profile: dashd-profile
+      count: 1
