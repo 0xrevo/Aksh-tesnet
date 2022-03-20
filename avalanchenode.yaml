@@ -1,0 +1,32 @@
+---
+version: "2.0"
+
+services:
+  avaxgo:
+    image: ghcr.io/ubunteroz/akash-avalanchego:latest
+    expose:
+      - port: 9650
+        as: 9650
+        to:
+          - global: true
+profiles:
+  compute:
+    avaxgo-profile:
+      resources:
+        cpu:
+          units: 2.0
+        memory:
+          size: 4Gi
+        storage:
+          size: 128Gi
+  placement:
+    westcoast:
+      pricing:
+        avaxgo-profile:
+          denom: uakt
+          amount: 1000
+deployment:
+  avaxgo:
+    westcoast:
+      profile: avaxgo-profile
+      count: 1
