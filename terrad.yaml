@@ -1,0 +1,32 @@
+---
+version: "2.0"
+
+services:
+  terrad:
+    image: ghcr.io/ubunteroz/akash-terrad:0.5.17-4
+    expose:
+      - port: 26657
+        as: 26657
+        to:
+          - global: true
+profiles:
+  compute:
+    terrad-profile:
+      resources:
+        cpu:
+          units: 2.0
+        memory:
+          size: 16Gi
+        storage:
+          size: 128Gi
+  placement:
+    westcoast:
+      pricing:
+        terrad-profile:
+          denom: uakt
+          amount: 1000
+deployment:
+  terrad:
+    westcoast:
+      profile: terrad-profile
+      count: 1
