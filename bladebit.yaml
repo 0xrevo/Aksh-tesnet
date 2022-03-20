@@ -1,0 +1,47 @@
+---
+version: "2.0"
+
+services:
+  chia:
+    image: ghcr.io/ubunteroz/akash-bladebit:1.2.4-5
+    args:
+      - "--farmer-key"
+      - "91abd26e7a56a54ab500530f33285df6d853f587d3b013c236d3f43c3041b217deb59b010446ba553b87b07f47cef820"
+      - "--pool-key"
+      - "8107dfa8d74746420b5b745eee78e777b2043301260d9503c865863d8c1273d4bf59be05415351fedd0ed6b08735f0fb"
+      - "/plot"
+    expose:
+      - port: 80
+        as: 80
+        to:
+          - global: true
+    params:
+      storage:
+        data:
+          mount: /plot
+profiles:
+  compute:
+    chia-profile:
+      resources:
+        cpu:
+          units: 10.0
+        memory:
+          size: 420Gi
+        storage:
+          - size: 1Gi
+          - name: data
+            size: 512Gi
+            attributes:
+              persistent: true
+              class: beta3
+  placement:
+    westcoast:
+      pricing:
+        chia-profile:
+          denom: uakt
+          amount: 10000
+deployment:
+  chia:
+    westcoast:
+      profile: chia-profile
+      count: 1
